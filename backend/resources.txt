@@ -1,0 +1,6 @@
+
+express
+mongoose
+dotenv
+jsonwebtoken
+bcrytjs
