@@ -1,9 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "./Header";
-import { Lock, Mail } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Lock, Mail, Eye } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { login } from "../store/authSlice";
 
 function Login() {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [error, setError] = useState("");
+
+  const loginUser = async (data) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      const result = await response.json(); // parse response
+      console.log("Login response:", result);
+
+      if (result.success) {
+        dispatch(login(result.authToken));
+        navigate("/");
+      } else {
+        // handle error from backend
+        console.error("❌ Login failed:", result.message);
+        setError(result.message);
+        reset({ password: "" }); // clear only password field
+      }
+    } catch (error) {
+      console.error("❌ Error:", error.message);
+      setError("An unexpected error occurred. Please try again.");
+      reset({ password: "" }); // clear only password field
+    }
+  };
+
   return (
     <div className="min-h-screen  bg-gradient-to-br from-blue-50 to-indigo-100   ">
       <Header />
@@ -20,7 +67,10 @@ function Login() {
 
             {/* all inputs  */}
             <div>
-              <form className="p-8 space-y-6">
+              <form
+                onSubmit={handleSubmit(loginUser)}
+                className="p-8 space-y-6"
+              >
                 <div className="relative">
                   <label
                     htmlFor="email"
@@ -30,11 +80,23 @@ function Login() {
                   </label>
                   <Mail className="absolute left-3  h-auto w-5 top-10 text-gray-400" />
                   <input
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: "Please enter a valid email",
+                      },
+                    })}
                     name="email"
                     className="pl-10 w-full border border-gray-300 rounded-xl px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     type="email"
                     placeholder="xyz@gmail.com"
                   />
+                  {errors.email && (
+                    <span className="text-red-500">
+                      {errors.email?.message}
+                    </span>
+                  )}
                 </div>
                 <div className="relative">
                   <label
@@ -44,12 +106,21 @@ function Login() {
                     Password
                   </label>
                   <Lock className="absolute left-3 h-auto w-5 top-10 text-gray-400 " />
+                  <Eye className="absolute right-3 h-auto w-5 top-10 text-gray-400 " />
                   <input
+                    {...register("password", {
+                      required: "Password is required",
+                    })}
                     name="password"
                     className="pl-10 w-full border border-gray-300 rounded-xl px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     type="password"
                     placeholder="************"
                   />
+                  {errors.password && (
+                    <span className="text-red-500">
+                      {errors.password?.message}
+                    </span>
+                  )}
                 </div>
 
                 <button
@@ -59,9 +130,9 @@ function Login() {
                   Submit
                 </button>
                 <div className="flex justify-center items-center">
-                  Create new Account&nbsp;
+                  Don&apos;t have an account?&nbsp;
                   <span className="text-blue-600">
-                    <Link to="/signup">Signup</Link>
+                    <Link to="/signup">Sign up</Link>
                   </span>
                 </div>
               </form>

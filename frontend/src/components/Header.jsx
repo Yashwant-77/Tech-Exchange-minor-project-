@@ -1,16 +1,22 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, User } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import Button from "./Button";
+import { logout } from "../store/authSlice";
 
 function Header() {
   const isLoggedIn = useSelector((state) => state.auth.status);
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const logoutButton = () => {
+    dispatch(logout());
+    navigate("/");
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4">
@@ -59,7 +65,7 @@ function Header() {
                 <Button onClick={() => navigate("/signup")}>Sign Up</Button>
               </>
             ) : (
-              <Button onClick={() => navigate("/")}>
+              <Button onClick={logoutButton}>
                 <User className="h-4 w-4 mr-2" />
                 Logout
               </Button>

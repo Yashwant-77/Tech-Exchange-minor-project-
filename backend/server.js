@@ -2,6 +2,8 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import authRouter from './routes/auth.js'
+import connectToMongoDB from './db.js'
+import cors from 'cors'
 
 // env Configurations
 dotenv.config();
@@ -9,6 +11,15 @@ dotenv.config();
 // Initializations
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Connect to Database
+connectToMongoDB();
+
+
+// Allow frontend to access backend APIs
+app.use(cors({ origin: "http://localhost:5173" }))
+
+
 
 // Middlewares to use json data in request body
 app.use(express.json());
