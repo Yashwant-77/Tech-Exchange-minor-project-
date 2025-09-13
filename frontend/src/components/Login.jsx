@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Header from "./Header";
-import { Lock, Mail, Eye } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -18,6 +18,7 @@ function Login() {
   const dispatch = useDispatch();
 
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const loginUser = async (data) => {
     try {
@@ -106,20 +107,39 @@ function Login() {
                     Password
                   </label>
                   <Lock className="absolute left-3 h-auto w-5 top-10 text-gray-400 " />
-                  <Eye className="absolute right-3 h-auto w-5 top-10 text-gray-400 " />
+                  {showPassword ? (
+                    <Eye
+                      onClick={() => setShowPassword(false)}
+                      className="absolute right-3 h-auto w-5 top-10 text-gray-400 "
+                    />
+                  ) : (
+                    <EyeOff
+                      onClick={() => setShowPassword(true)}
+                      className="absolute right-3 h-auto w-5 top-10 text-gray-400 "
+                    />
+                  )}
                   <input
                     {...register("password", {
                       required: "Password is required",
                     })}
                     name="password"
-                    className="pl-10 w-full border border-gray-300 rounded-xl px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    type="password"
+                    className={
+                      "pl-10 w-full border border-gray-300 rounded-xl px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    }
+                    type={showPassword ? "text" : "password"}
                     placeholder="************"
                   />
                   {errors.password && (
                     <span className="text-red-500">
                       {errors.password?.message}
                     </span>
+                  )}
+                  {error === "" ? (
+                    <div></div>
+                  ) : (
+                    <div className="text-red-500">
+                      Sorry login failed.Please try again.
+                    </div>
                   )}
                 </div>
 

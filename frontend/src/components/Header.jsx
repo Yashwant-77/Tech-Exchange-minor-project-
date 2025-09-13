@@ -23,7 +23,7 @@ function Header() {
         <div className="flex items-center justify-between">
           <Link to="/">
             <div className="flex items-center space-x-2">
-              <div className="bg-blue-600 w-8 h-8 rounded-lg"></div>
+              {/* <div className="bg-blue-600 w-8 h-8 rounded-lg"></div> */}
               <span className="text-xl font-bold text-gray-900">
                 TechExchange
               </span>
@@ -65,10 +65,13 @@ function Header() {
                 <Button onClick={() => navigate("/signup")}>Sign Up</Button>
               </>
             ) : (
-              <Button onClick={logoutButton}>
-                <User className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
+              <div className="flex justify-center space-x-5 items-center">
+                <User />
+                <Button onClick={logoutButton}>
+                  <User className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
             )}
           </div>
           <Button
@@ -110,6 +113,9 @@ function Header() {
               >
                 About
               </Link>
+              {/* start chatgpt code*/}
+
+              {/* end  */}
               <div className="flex space-x-2 pt-2">
                 <Button className="flex-1" onClick={() => navigate("/login")}>
                   Login
